@@ -2,7 +2,7 @@ const discord = require("discord.js");
 const mySql = require("mysql");
 
 module.exports.run = async (bot, message, args, conn) => {
-    console.log("Gith - Inventory invoked.")
+    console.log("Gith - Inventory invoked by " + message.guild.members.get(message.author.id).displayName + ".");
 
     // check for metion and remove it from args if it's there
     let target = message.mentions.users.first();
@@ -11,7 +11,7 @@ module.exports.run = async (bot, message, args, conn) => {
     } else {
        args = args.slice(1);
     }
-
+    
     // own character or have permission
     if(target.id === message.author.id || message.member.roles.some(role => role.name === 'Moderator')) {
         // parse arguments to determine what field we're inserting/updating
@@ -21,7 +21,7 @@ module.exports.run = async (bot, message, args, conn) => {
         // load invetory for this character
         let items = await getInv(target.id, conn);
 
-        // no parameters were passed, display character's invetory
+        // no parameters were passed, display character's inventory
         if(!stack[0]) {
             let invStr = "";
             items.forEach(i => {
@@ -45,10 +45,15 @@ module.exports.run = async (bot, message, args, conn) => {
                 let pair = s.split(" ");
                 let strQty = pair.pop();
                 let itemQty = parseInt(strQty);
-                // not a number, put it back, display balance of item
-                if(!itemQty) {
+                let itemName = pair.join(" ");
+                // if only a number was passed, treat it as the item name
+                if(!itemName) {
                     pair.push(strQty);
                     itemName = pair.join(" ");
+                    itemQty = null;
+                }
+                // not a number, put it back, display balance of item
+                if(!itemQty) {
                     itemQty = matchItem(items, itemName);
                     if(itemQty == null) {
                         message.channel.send(`${titleCase(itemName)} not found in ${message.guild.members.get(target.id).displayName}'s inventory.`);
@@ -61,7 +66,6 @@ module.exports.run = async (bot, message, args, conn) => {
                     }
                 // valid pair, adjust or insert
                 } else {
-                    itemName = pair.join(" ");
                     currentQty = matchItem(items, itemName);
                     // record exists, update
                     if(currentQty != null) {

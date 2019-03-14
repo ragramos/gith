@@ -11,8 +11,7 @@ module.exports.run = async (bot, message, args, conn) => {
     } else {
        args = args.slice(1);
     }
-
-    console.log(target.id)
+    
     // own character or have permission
     if(target.id === message.author.id || message.member.roles.some(role => role.name === 'Moderator')) {
         // parse arguments to determine what field we're inserting/updating
@@ -22,7 +21,7 @@ module.exports.run = async (bot, message, args, conn) => {
         // load invetory for this character
         let items = await getInv(target.id, conn);
 
-        // no parameters were passed, display character's invetory
+        // no parameters were passed, display character's inventory
         if(!stack[0]) {
             let invStr = "";
             items.forEach(i => {

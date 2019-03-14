@@ -32,7 +32,6 @@ module.exports.run = async (bot, message, args, conn) => {
                 s = s.trim();
                 let pair = s.split(" ");
                 let coinName = pair[0];
-                let currentQty = null;
                 let foundCoin = false;
                 // loop through valid coin names
                 for(i = 0; i < coins.length; i++) {

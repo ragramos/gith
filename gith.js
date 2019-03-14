@@ -27,10 +27,10 @@ fs.readdir("./cmd", (err, files) => {
 });
 
 var conn = mySql.createConnection({
-    host: proc.env.host,
-    user: proc.env.user,
-    password: proc.env.password,
-    database: proc.env.db
+    host: process.env.host,
+    user: process.env.user,
+    password: process.env.password,
+    database: process.env.db
 });
 
 conn.connect(err => {
@@ -59,4 +59,4 @@ bot.on("message", async message => {
 
 });
 
-bot.login(proc.env.token);
+bot.login(process.env.token);

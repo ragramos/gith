@@ -1,7 +1,7 @@
 const botSettings = require("./githsettings.json");
 const discord = require("discord.js");
 const fs = require("fs");
-const mySql = require("mysql");
+// const mySql = require("mysql");
 
 const bot = new discord.Client({disableEveryone: true});
 

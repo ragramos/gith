@@ -1,7 +1,8 @@
 const discord = require("discord.js");
-const mySql = require("mysql");
+// const mySql = require("mysql");
 
-module.exports.run = async (bot, message, args, conn) => {
+// module.exports.run = async (bot, message, args, conn) => {
+module.exports.run = async (bot, message, args) => {
     console.log("Gith - Currency invoked by " + message.guild.members.get(message.author.id).displayName + ".");
 
     // check for metion and remove it from args if it's there

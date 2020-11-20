@@ -26,6 +26,7 @@ fs.readdir("./cmd", (err, files) => {
     });
 });
 
+/*
 var conn = mySql.createConnection({
     host: process.env.host,
     user: process.env.user,
@@ -37,6 +38,7 @@ conn.connect(err => {
     if(err) throw err;
     console.log(`Connected to database ${conn.config.database}.`);
 });
+*/
 
 bot.on("ready", async () => {
     bot.user.setPresence({ game: { name: `D&D 5e.`}, type: 0});
@@ -55,7 +57,8 @@ bot.on("message", async message => {
     if(!command.startsWith(botSettings.prefix)) return;
 
     let cmd = bot.commands.get(command.slice(botSettings.prefix.length));
-    if(cmd) cmd.run(bot, message, args, conn);
+    // if(cmd) cmd.run(bot, message, args, conn);
+    if(cmd) cmd.run(bot, message, args);
 
 });
 

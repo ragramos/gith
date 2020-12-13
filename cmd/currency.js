@@ -2,7 +2,7 @@ const discord = require("discord.js");
 const mySql = require("mysql");
 
 module.exports.run = async (bot, message, args, conn) => {
-    console.log("Gith - Currency invoked by " + message.guild.members.get(message.author.id).displayName + ".");
+    console.log("Gith - Currency invoked by " + message.guild.member(message.author).displayName + ".");
 
     // check for metion and remove it from args if it's there
     let target = message.mentions.users.first();
@@ -74,7 +74,7 @@ module.exports.run = async (bot, message, args, conn) => {
         // all inquiries and updates done, display a single result
         let fundsEmbed = new discord.RichEmbed()
             .setColor(bot.color)
-            .setTitle(`Currency carried by ${message.guild.members.get(target.id).displayName}:`)
+            .setTitle(`Currency carried by ${message.guild.member(target).displayName}:`)
             .setDescription("`PP: " + newFunds["pp"] + " | GP: " + newFunds["gp"] + " | SP: " + newFunds["sp"] + " | CP: " + newFunds["cp"] + "`");
         message.channel.send(fundsEmbed);
 

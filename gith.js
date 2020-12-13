@@ -3,7 +3,7 @@ const discord = require("discord.js");
 const fs = require("fs");
 const mySql = require("mysql");
 
-const bot = new discord.Client({disableEveryone: true});
+const bot = new discord.Client({disableMentions: 'everyone'});
 
 bot.commands = new discord.Collection();
 bot.color = botSettings.color;

@@ -2,7 +2,7 @@ const discord = require("discord.js");
 const mySql = require("mysql");
 
 module.exports.run = async (bot, message, args, conn) => {
-    console.log("Gith - Inventory invoked by " + message.guild.members.get(message.author.id).displayName + ".");
+    console.log("Gith - Inventory invoked by " + message.guild.member(message.author).displayName + ".");
 
     // check for metion and remove it from args if it's there
     let target = message.mentions.users.first();
@@ -34,7 +34,7 @@ module.exports.run = async (bot, message, args, conn) => {
             if(invStr.length > 0) invStr = invStr + ".";
             let invEmbed = new discord.RichEmbed()
                 .setColor(bot.color)
-                .setTitle(`Items in inventory for ${message.guild.members.get(target.id).displayName}:`)
+                .setTitle(`Items in inventory for ${message.guild.member(target).displayName}:`)
                 .setDescription(invStr);
             message.channel.send({embed: invEmbed});
         // items were passed check for qty
@@ -75,7 +75,7 @@ module.exports.run = async (bot, message, args, conn) => {
                             return message.channel.send(`Successfully updated ${titleCase(itemName)} quantity to ${newQty}.`);
                         } else if(newQty == 0) {
                             conn.query(`DELETE FROM inventory_master where discord_id = "${target.id}" AND item_name = "${itemName}"`);
-                            return message.channel.send(`Successfully removed ${titleCase(itemName)} from ${message.guild.members.get(target.id).displayName}'s inventory.`);
+                            return message.channel.send(`Successfully removed ${titleCase(itemName)} from ${message.guild.member(target).displayName}'s inventory.`);
                         } else {
                             return message.channel.send(`There is not enough ${titleCase(itemName)} in inventory for this transaction.`);
                         }
@@ -83,7 +83,7 @@ module.exports.run = async (bot, message, args, conn) => {
                     } else {
                         if(itemQty >= 0) {
                             conn.query(`INSERT INTO inventory_master (discord_id, item_name, item_qty) VALUES ("${target.id}", "${itemName}", ${itemQty})`);
-                            return message.channel.send(`Successfully added ${itemQty} ${titleCase(itemName)} to ${message.guild.members.get(target.id).displayName}.`);
+                            return message.channel.send(`Successfully added ${itemQty} ${titleCase(itemName)} to ${message.guild.member(target).displayName}.`);
                         } else {
                             return message.channel.send(`Cannot consume an item not in inventory.`);
                         }

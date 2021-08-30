@@ -92,7 +92,6 @@ module.exports.run = async (bot, message, args, conn) => {
                             return message.channel.send(`Cannot consume an item not in inventory.`);
                         }
                     }
-                    await new Promise(resolve => setTimeout(resolve, 1000));
                 }
             });
         }

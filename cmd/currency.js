@@ -23,7 +23,7 @@ module.exports.run = async (bot, message, args, conn) => {
         let server_name = message.guild.name;
         let discord_tag = message.guild.member(target).displayName;
         let funds = await getCurr(server_id, target.id, conn);
-        let newFunds = {"server_id": "", "server_name": "", "discord_id": "", "discord_tag: "", "pp": 0, "gp": 0, "sp": 0, "cp": 0};
+        let newFunds = {"server_id": "", "server_name": "", "discord_id": "", "discord_tag": "", "pp": 0, "gp": 0, "sp": 0, "cp": 0};
 
         if(funds) newFunds = funds;
 

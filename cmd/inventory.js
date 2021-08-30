@@ -19,7 +19,11 @@ module.exports.run = async (bot, message, args, conn) => {
         let stack = scrub(parm.split("/"));
 
         // load invetory for this character
-        let items = await getInv(target.id, conn);
+        
+        let server_id = message.guild.id;
+        let server_name = message.guild.name;
+        let discord_tag = message.guild.member(target).displayName;
+        let items = await getInv(server_id, target.id, conn);
 
         // no parameters were passed, display character's inventory
         if(!stack[0]) {
@@ -71,10 +75,10 @@ module.exports.run = async (bot, message, args, conn) => {
                     if(currentQty != null) {
                         let newQty = currentQty + itemQty;
                         if(newQty > 0) {
-                            conn.query(`UPDATE inventory_master SET item_qty = ${newQty} where discord_id = "${target.id}" AND item_name = "${itemName}"`);
+                            conn.query(`UPDATE inventory_master SET item_qty = ${newQty}, discord_tag = "${discord_tag}" where server_id = "${server_id}" AND discord_id = "${target.id}" AND item_name = "${itemName}"`);
                             return message.channel.send(`Successfully updated ${titleCase(itemName)} quantity to ${newQty}.`);
                         } else if(newQty == 0) {
-                            conn.query(`DELETE FROM inventory_master where discord_id = "${target.id}" AND item_name = "${itemName}"`);
+                            conn.query(`DELETE FROM inventory_master where server_id = "${server_id}" AND discord_id = "${target.id}" AND item_name = "${itemName}"`);
                             return message.channel.send(`Successfully removed ${titleCase(itemName)} from ${message.guild.member(target).displayName}'s inventory.`);
                         } else {
                             return message.channel.send(`There is not enough ${titleCase(itemName)} in inventory for this transaction.`);
@@ -82,12 +86,13 @@ module.exports.run = async (bot, message, args, conn) => {
                     // null qty, insert
                     } else {
                         if(itemQty >= 0) {
-                            conn.query(`INSERT INTO inventory_master (discord_id, item_name, item_qty) VALUES ("${target.id}", "${itemName}", ${itemQty})`);
+                            conn.query(`INSERT INTO inventory_master (server_id, server_name, discord_id, discord_tag, item_name, item_qty) VALUES ("${server_id}", "${server_name}", "${target.id}", "${discord_tag}", "${itemName}", ${itemQty})`);
                             return message.channel.send(`Successfully added ${itemQty} ${titleCase(itemName)} to ${message.guild.member(target).displayName}.`);
                         } else {
                             return message.channel.send(`Cannot consume an item not in inventory.`);
                         }
                     }
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                 }
             });
         }
@@ -111,9 +116,9 @@ function titleCase(str) {
   }
 
 // read inventory for a character
-function getInv(myUser, myConn) {
+function getInv(myServer, myUser, myConn) {
     return new Promise((resolve, reject) => {
-        myConn.query(`SELECT * FROM inventory_master WHERE discord_id = "${myUser}" ORDER BY item_name`, (myErr, myRows) => {
+        myConn.query(`SELECT * FROM inventory_master WHERE server_id = "${myServer}" AND discord_id = "${myUser}" ORDER BY item_name`, (myErr, myRows) => {
             if(myErr) reject(myErr);
             else resolve(myRows);
         });
@@ -136,5 +141,5 @@ function matchItem(myList, myItem) {
 
 module.exports.help = {
     name: "inv",
-    usage: "inv [@MENTION] [ITEM_NAME QTY / ITEM_NAME QTY ...]"
+    usage: "inv [@MENTION] [ITEM_NAME QTY / ITEM_NAME QTY ...]\n Example: ~inv arrow 10 / torch -1"
 }

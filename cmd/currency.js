@@ -19,8 +19,11 @@ module.exports.run = async (bot, message, args, conn) => {
         let stack = scrub(parm.split("/"));
         
         // load invetory for this character
-        let funds = await getCurr(target.id, conn);
-        let newFunds = {"discord_id": "", "pp": 0, "gp": 0, "sp": 0, "cp": 0};
+        let server_id = message.guild.id;
+        let server_name = message.guild.name;
+        let discord_tag = message.guild.member(target).displayName;
+        let funds = await getCurr(server_id, target.id, conn);
+        let newFunds = {"server_id": "", "server_name": "", "discord_id": "", "discord_tag": "", "pp": 0, "gp": 0, "sp": 0, "cp": 0};
 
         if(funds) newFunds = funds;
 

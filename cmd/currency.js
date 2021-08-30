@@ -68,9 +68,9 @@ module.exports.run = async (bot, message, args, conn) => {
             });
             // all commands processed, insert or update
             if(!funds) {
-                conn.query(`INSERT INTO currency_master (server_id, server_name, discord_id, discord_tag, pp, gp, sp, cp) VALUES ('${server_id}', '${server_name}', '${target.id}', '${discord_tag}', ${newFunds["pp"]}, ${newFunds["gp"]}, ${newFunds["sp"]}, ${newFunds["cp"]})`);
+                conn.query(`INSERT INTO currency_master (discord_id, pp, gp, sp, cp) VALUES ('${target.id}', ${newFunds["pp"]}, ${newFunds["gp"]}, ${newFunds["sp"]}, ${newFunds["cp"]})`);
             } else {
-                conn.query(`UPDATE currency_master SET pp = ${newFunds["pp"]}, gp = ${newFunds["gp"]}, sp = ${newFunds["sp"]}, cp = ${newFunds["cp"]} where server_id = '${server_id}' AND discord_id = '${target.id}'`);
+                conn.query(`UPDATE currency_master SET pp = ${newFunds["pp"]}, gp = ${newFunds["gp"]}, sp = ${newFunds["sp"]}, cp = ${newFunds["cp"]} where discord_id = '${target.id}'`);
             }
         }
 
@@ -94,9 +94,9 @@ function scrub(arr) {
 }
     
 // read currency for a character
-function getCurr(myServer, myUser, myConn) {
+function getCurr(myUser, myConn) {
     return new Promise((resolve, reject) => {
-        myConn.query(`SELECT * FROM currency_master WHERE server_id = '${myServer}' AND discord_id = '${myUser}'`, (myErr, myRows) => {
+        myConn.query(`SELECT * FROM currency_master WHERE discord_id = '${myUser}'`, (myErr, myRows) => {
             if(myErr) reject(myErr);
             else resolve(myRows[0]);
         });
@@ -105,5 +105,5 @@ function getCurr(myServer, myUser, myConn) {
     
 module.exports.help = {
     name: "curr",
-    usage: "curr [@MENTION] [pp QTY / gp QTY / sp QTY / cp QTY]\nExample ~curr gp -1 / sp 10"
+    usage: "curr [@MENTION] [pp QTY / gp QTY / sp QTY / cp QTY]"
 }

@@ -55,7 +55,8 @@ module.exports.run = async (bot, message, args, conn) => {
                         let bal = [newFunds["pp"], newFunds["gp"], newFunds["sp"], newFunds["cp"]];
                         let request = coinQty;
                         let total = 0;
-                        let convReq = request*(10**(3-reqLevel));
+                        const fixedReq = request*(10**(3-reqLevel));
+                        let convReq = fixedReq;
 
                         // check down for total
                         for (l = reqLevel ; l < 4; l++) {
@@ -89,7 +90,7 @@ module.exports.run = async (bot, message, args, conn) => {
                             total += bal[l]*(10**(3-l));
                         }
                         // Check now enough small coin, loop and pay out
-                        if (request <= total) {
+                        if (fixedReq <= total) {
                             let level = reqLevel;
                             // we should have converted enough coin, loop and subtract
                             while(level<4 && request>0) {

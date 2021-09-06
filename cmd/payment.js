@@ -59,7 +59,7 @@ module.exports.run = async (bot, message, args, conn) => {
 
                         // check down for total
                         for (l = reqLevel ; l < 4; l++) {
-                            total =+ bal[l];
+                            total =+ bal[l]*(10**(3-l));
                         }
 
                         // Not enough small coin, look up
@@ -83,8 +83,13 @@ module.exports.run = async (bot, message, args, conn) => {
                                 }
                             }
                         }
+                        // Recalculate total after possible conversion
+                        total = 0;
+                        for (l = reqLevel ; l < 4; l++) {
+                            total += bal[l]*(10**(3-l));
+                        }
                         // Check now enough small coin, loop and pay out
-                        if (request <= bal[reqLevel]) {
+                        if (request <= total) {
                             let level = reqLevel;
                             // we should have converted enough coin, loop and subtract
                             while(level<4 && request>0) {
@@ -101,11 +106,11 @@ module.exports.run = async (bot, message, args, conn) => {
                                 }
                             }
 
-                        // Update new funds from balance array back to funds object
-                        newFunds["pp"] = bal[0];
-                        newFunds["gp"] = bal[1];
-                        newFunds["sp"] = bal[2];
-                        newFunds["cp"] = bal[3];
+                            // Update new funds from balance array back to funds object
+                            newFunds["pp"] = bal[0];
+                            newFunds["gp"] = bal[1];
+                            newFunds["sp"] = bal[2];
+                            newFunds["cp"] = bal[3];
 
                         // Not enough funds even after conversion attempt
                         } else {

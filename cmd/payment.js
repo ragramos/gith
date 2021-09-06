@@ -173,7 +173,7 @@ function getCurr(myServer, myUser, myConn) {
     });
 }
     
-module.exports.pay = {
+module.exports.help = {
     name: "pay",
     usage: "pay [@MENTION] [pp QTY / gp QTY / sp QTY / cp QTY]\n Example: ~pay gp 1 / sp 5 to spend 1 gp and 5 sp"
 }

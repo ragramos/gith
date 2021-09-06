@@ -2,7 +2,7 @@ const discord = require("discord.js");
 const mySql = require("mysql");
 
 module.exports.run = async (bot, message, args, conn) => {
-    console.log("Gith - Currency invoked by " + message.guild.member(message.author).displayName + ".");
+    console.log("Gith - Payment invoked by " + message.guild.member(message.author).displayName + ".");
 
     // check for metion and remove it from args if it's there
     let target = message.mentions.users.first();

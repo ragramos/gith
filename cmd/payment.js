@@ -51,55 +51,47 @@ module.exports.run = async (bot, message, args, conn) => {
                                         
                     // valid quantity
                     if(coinQty) {
-// START NEW CODE
+                        // Convert funds object to balance array
                         let bal = [newFunds["pp"], newFunds["gp"], newFunds["sp"], newFunds["cp"]];
                         let request = coinQty;
                         let total = 0;
                         let convReq = request*(10**(3-reqLevel));
-                        console.log("converted request =", convReq);
+
                         // check down for total
                         for (l = reqLevel ; l < 4; l++) {
                             total =+ bal[l];
                         }
-                        console.log("total = ", total);
+
                         // Not enough small coin, look up
                         if (convReq > total) {
                             convReq -= total;
-                            console.log("converted raw =", convReq);
-                
                             let level = reqLevel - 1;
                             let workReq = Math.ceil(convReq/(10**(3-level)));
-                            console.log("converted up =", workReq, "level =", level);
-                            
+                            // loop and convert down, then check again because we may have to convert more than one level                            
                             while(level >= 0 && bal[reqLevel] < request) {
                                 // not enough yet, go up again
                                 if (workReq > bal[level]) {
                                     level--
                                     workReq = Math.trunc(workReq/10) + 1;
-                                    console.log("converted up loop =", workReq, "level =", level);
                                 // got enough, subtract and trickle down
                                 } else {
                                     bal[level] -= workReq;
                                     bal[level + 1] += workReq * 10;
-                                    console.log("balance", bal[level], "for level", level);
-                                    console.log("balance", bal[level+1], "for level", level+1);
                                     // reset level to iterate
                                     level = reqLevel - 1;
                                     workReq = Math.ceil(convReq/(10**(3-level)));
-                                    console.log("converted down loop =", workReq, "level =", level);
                                 }
                             }
                         }
                         // Check now enough small coin, loop and pay out
-                        console.log("request =", request, bal[reqLevel]);
                         if (request <= bal[reqLevel]) {
                             let level = reqLevel;
+                            // we should have converted enough coin, loop and subtract
                             while(level<4 && request>0) {
                                 // not enough funds
                                 if (request > bal[level]) {
                                     request -= bal[level];
                                     bal[level] = 0;
-                                    console.log("new request = ", request, "new balance =", bal[level]);
                                     level++;
                                     request *= 10;
                                 // got enough
@@ -108,24 +100,14 @@ module.exports.run = async (bot, message, args, conn) => {
                                     request = 0;
                                 }
                             }
-                        //} else {
-                        //    message.channel.send(`Not enough funds.`)
-                        //}
-                        console.log(bal[0], bal[1], bal[2], bal[3]);
 
-                        // Update new funds
+                        // Update new funds from balance array back to funds object
                         newFunds["pp"] = bal[0];
                         newFunds["gp"] = bal[1];
                         newFunds["sp"] = bal[2];
                         newFunds["cp"] = bal[3];
-// END NEW CODE
-                        //let newQty = newFunds[coinName] + coinQty;
 
-                        // positive balance
-                        //if(newQty >= 0) {
-                        //    newFunds[coinName] = newQty;
-
-                        // negative balance, not enough funds
+                        // Not enough funds even after conversion attempt
                         } else {
                             return message.channel.send("Not enough funds for this transaction.");
                         }

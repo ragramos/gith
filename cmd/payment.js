@@ -59,7 +59,7 @@ module.exports.run = async (bot, message, args, conn) => {
 
                         // check down for total
                         for (l = reqLevel ; l < 4; l++) {
-                            total =+ bal[l]*(10**(3-l));
+                            total += bal[l]*(10**(3-l));
                         }
 
                         // Not enough small coin, look up
